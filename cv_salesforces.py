@@ -78,7 +78,7 @@ try:
 except NameError:
     SCRIPT_DIR = Path.cwd()
 
-LOGO_FILE = str(SCRIPT_DIR / "images.png")
+LOGO_FILE = str(SCRIPT_DIR / "C:images.png")
 
 
 # ========= CSS STYLING ==========
@@ -174,6 +174,7 @@ def get_image_as_base64(file):
 
 
 def extract_pdf_text(uploaded_file):
+
     try:
         return extract_text(uploaded_file)
     except:
@@ -353,7 +354,7 @@ def create_skills_table_chart(relevant, missing):
         table_data.append(row)
     
     table = ax.table(cellText=table_data, cellLoc='left', loc='center',
-                     colWidths=[0.5, 0.5])
+                       colWidths=[0.5, 0.5])
     
     table.auto_set_font_size(False)
     table.set_fontsize(10)
@@ -402,7 +403,7 @@ def build_professional_pdf(*, logo_path: str | None, candidate_name: str,
     
     buff = BytesIO()
     doc = SimpleDocTemplate(buff, pagesize=A4, leftMargin=50, rightMargin=50, 
-                            topMargin=50, bottomMargin=50)
+                             topMargin=50, bottomMargin=50)
     
     styles = getSampleStyleSheet()
     
@@ -742,7 +743,7 @@ def get_salesforce_connection():
             username=os.getenv("SF_USERNAME"),
             password=os.getenv("SF_PASSWORD"),
             security_token=os.getenv("SF_SECURITY_TOKEN"),
-            domain=os.getenv("SF_DOMAIN", "test")
+            domain=os.getenv("SF_DOMAIN", "login")
         )
         return sf
     except Exception as e:
@@ -766,7 +767,7 @@ def create_engineer_application_record(first_name, last_name, email, azure_url, 
             "First_Name__c": first_name,
             "Last_Name__c": last_name,
             "Email_Address__c": email,
-            "your_cv__c": azure_url,
+            "Your_CV__c": azure_url,  # <--- !!! THIS IS THE FIX (Capital 'Y') !!!
             "Primary_Trade__c": trade
         })
 
@@ -912,6 +913,7 @@ else:
                 st.session_state.resume,
                 st.session_state.job_desc
             )
+            print(analysis)
             # This score is the average from the AI's detailed criteria
             if analysis.criteria_scores:
                 ai_score = sum(c.score for c in analysis.criteria_scores) / (len(analysis.criteria_scores) * 5)
@@ -959,7 +961,7 @@ else:
     with col2:
         st.markdown(f"""
         <div class="score-card">
-            <h3>🎯 AI Evaluation Score</h3>
+            <h3> AI Evaluation Score</h3>
             <h2>{ai_score:.1%}</h2>
             <p>Criteria-Based Assessment</p>
         </div>
@@ -969,7 +971,7 @@ else:
 
     # ========= FULL REPORT ==========
     st.markdown('<div class="report-container">', unsafe_allow_html=True)
-    st.markdown("## 📝 Detailed Analysis Report")
+    st.markdown("##  Detailed Analysis Report")
     st.markdown(report_md, unsafe_allow_html=True) # Allow HTML in markdown for safety
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1030,11 +1032,11 @@ else:
             # Step 4 — Build FULL public SAS URL
             azure_url = f"{blob_client.url}?{sas_token}"
 
-            st.success("✅ PDF uploaded to Azure successfully!")
-            st.info(f"🔗 Public Azure File URL:\n{azure_url}")
+            st.success(" PDF uploaded to Azure successfully!")
+            st.info(f"Public Azure File URL:\n{azure_url}")
 
             # Step 5 — Push to Salesforce
-            with st.spinner("📨 Saving record to Salesforce..."):
+            with st.spinner("Saving record to Salesforce..."):
                 sf_result = create_engineer_application_record(
                     first_name=st.session_state.first_name,
                     last_name=st.session_state.last_name,
@@ -1044,15 +1046,15 @@ else:
                 )
 
             if sf_result["success"]:
-                st.success(f"🎉 Salesforce Record Created! ID: {sf_result['result']['id']}")
+                st.success(f" Salesforce Record Created! ID: {sf_result['result']['id']}")
             else:
-                st.error(f"❌ Salesforce Error: {sf_result['error']}")
+                st.error(f" Salesforce Error: {sf_result['error']}")
 
         except Exception as err:
-            st.error(f"❌ Azure Upload or Salesforce Error: {err}")
+            st.error(f" Azure Upload or Salesforce Error: {err}")
             st.exception(err)
     else:
-        st.error("❌ Missing Azure configuration. Check .env file.")
+        st.error(" Missing Azure configuration. Check .env file.")
 
     # --- STEP 4: Reset Button ---
     st.markdown("---")
@@ -1062,3 +1064,8 @@ else:
             st.session_state.pop(key)
         
         st.rerun()
+
+
+
+
+        
